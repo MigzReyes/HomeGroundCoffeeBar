@@ -1,19 +1,9 @@
 @{
-    Layout = null;
     ViewData["Title"] = "Sign up";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
-    <link rel="icon" type="image/x-icon" href="~/img/icon.png" />
-    <link rel="stylesheet" href="~/css/signup.css" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
+
+
     <div class="signup-container">
     
         <div class="header">
@@ -39,73 +29,33 @@
         
         <div class="signup-box-container">
             <div class="signup-box">
-                <form id="signupForm" class="signup-form" method="post" action="/Account/Signup">
+<form id="signupForm" class="signup-form">
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="Name" required />
+    </div>
 
-                     <div class="form-group">
-                        <label for="name">Name</label>
-                        <input type="name" id="name" name="Name" required />
-                    </div>
+    <div class="form-group">
+        <label for="Phone">Phone Number</label>
+        <input type="tel" id="phone" name="Phone" pattern="[0-9]{11}" maxlength="11" required />
+    </div>
 
-                    <div class="form-group">
-                        <label for="Phone">Phone Number</label>
-                        <input type="tel" id="phone" name="Phone" pattern="[0-9]{11}" maxlength="11" required />
-                    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="Password" required />
 
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="Password" required />
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" required />
+    </div>
 
-                        <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" required />
-                    </div>
-                </form>
+    <button type="submit" class="signup-btn">Brew Me In</button>
+</form>
             </div>
 
             <div class="sign-un-btn" >
-                <button form="signupForm" type="submit" class="signup-btn">Brew Me In</button>
                 <p class="signin-link">Already have an account? <a href="/Home/Signin">Sign in</a>
             </div>
         </div>
     </div>
 
-    <script>
-    
-        document.getElementById("signupForm").addEventListener("submit", function(event) {
-            const password = document.getElementById("password").value;
-            const confirmPassword = document.getElementById("confirmPassword").value;
-
-
-            if (password !== confirmPassword) {
-                event.preventDefault();
-
-                Swal.fire({
-                    icon: 'error',
-                    title: "Oops...",
-                    title: 'Incorrect password',
-                    confirmButtonColor: "#7066E0",
-                    background: "#FFFFFF",
-                    color: "#000000"
-                });
-            } 
-        });
-
-
-             @if (TempData["SignupSuccess"] != null)
-                    {
-                        <text>
-                        Swal.fire({
-                            title: 'Account Created!',
-                            text: 'Your account has been created successfully.',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = '/Home/Signin';
-                            }
-                        });
-                        </text>
-                    }
-    </script>
-
-</body>
-</html>
+<script src="@Url.Content("~/js/signup.js")"></script>

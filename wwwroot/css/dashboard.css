@@ -695,7 +695,7 @@ h3 {
 .options {
   display: flex;
   justify-content: space-between;
-  gap: 40px;
+  gap: 30px;
   flex-wrap: wrap;
 }
 
@@ -821,6 +821,8 @@ h3 {
     height: auto;
   }
 
+  
+
   .hotmilk .line3,
   .hotmilk .line4 {
     display: inline-block;
@@ -930,4 +932,13 @@ h3 {
   .scroll {
     display: none;
   }
+}
+
+
+@media (max-width: 1300px) {
+  .options {
+    gap: 30px;
+  }
+
+
 }
