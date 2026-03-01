@@ -5,14 +5,18 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Mvc;
 using Models;
 using MySql.Data.MySqlClient;
+using HomeGroundCoffeeBar.DTO;
+using HomeGroundCoffeeBar.Data;
 
 public class AccountController : Controller
 {
     private readonly string connectionString;
+    private readonly ApplicationDbContext _context;
 
-    public AccountController(IConfiguration configuration)
+    public AccountController(IConfiguration configuration, ApplicationDbContext context)
     {
         connectionString = configuration.GetConnectionString("DefaultConnection");
+        _context = context;
     }
 
     // ================================
@@ -89,39 +93,38 @@ public IActionResult GetStatus() {
     // ================================
     // SIGN UP
     // ================================
-    [HttpPost]
-    public IActionResult Signup(string Name, string Phone, string Password)
+[HttpPost]
+public async Task<IActionResult> Signup([FromBody] UserSignupDTO signup)
+{
+
+    Console.WriteLine($"Received signup: {signup.Username}, {signup.Email}");
+    if (signup == null)
+        return Json(new { success = false, message = "Invalid input" });
+
+    try
     {
-        try
+        var user = new UserModel
         {
-            using (var conn = new MySqlConnection(connectionString))
-            {
-                conn.Open();
-                string query = "INSERT INTO Users (Name, Phone, Password, CreatedAt) VALUES (@Name, @Phone, @Password, NOW())";
+            Name = signup.Username,
+            Phone = signup.Email,
+            Password = signup.Password,
+            CreatedAt = DateTime.Now
+        };
 
-                using (var cmd = new MySqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@Name", Name);
-                    cmd.Parameters.AddWithValue("@Phone", Phone);
-                    cmd.Parameters.AddWithValue("@Password", Password);
-                    cmd.ExecuteNonQuery();
+        _context.Users.Add(user);  // _context is your DbContext
+        await _context.SaveChangesAsync();
 
-                    // Get the inserted user Id
-                    var userId = cmd.LastInsertedId;
-                    HttpContext.Session.SetString("UserId", userId.ToString());
-                    HttpContext.Session.SetString("Phone", Phone);
-                    HttpContext.Session.SetString("Name", Name);
-                }
-            }
+        HttpContext.Session.SetString("UserId", user.Id.ToString());
+        HttpContext.Session.SetString("Phone", user.Phone);
+        HttpContext.Session.SetString("Name", user.Name);
 
-            TempData["SignupSuccess"] = true;
-            return RedirectToAction("Signup", "Home");
-        }
-        catch
-        {
-            return RedirectToAction("Signup", "Home");
-        }
+        return Json(new { success = true });
     }
+    catch (Exception ex)
+    {
+        return Json(new { success = false, message = ex.Message });
+    }
+}
 
     // ================================
     // ADD TO CART
